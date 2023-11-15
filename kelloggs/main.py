@@ -6,6 +6,7 @@ from typing import TypeAlias
 DIMENSION = 2
 BOX_WIDTH = 100.0
 SPRING_CONSTANT = 1.0
+WALL_SPRING_CONSTANT = 100.0
 GRAVITY_CONSTANT = 1.0
 
 Position: TypeAlias = list[float]
@@ -36,6 +37,19 @@ def update_repulsive_forces(particles: list[Particle]) -> None:
                 particles[i].force[1] += force_iy
                 particles[j].force[0] -= force_ix
                 particles[j].force[1] -= force_iy
+
+
+def update_wall_forces(particles: list[Particle]) -> None:
+    for particle in particles:
+        # left wall
+        if (elongation := -particle.position[0] - particle.radius) > 0:
+            particle.force[0] += WALL_SPRING_CONSTANT * elongation
+        # right wall
+        if (elongation := particle.position[0] + particle.radius - BOX_WIDTH) > 0:
+            particle.force[0] -= WALL_SPRING_CONSTANT * elongation
+        # bottom wall
+        if (elongation := -particle.position[1] - particle.radius) > 0:
+            particle.force[1] += WALL_SPRING_CONSTANT * elongation
 
 
 def main() -> None:

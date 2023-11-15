@@ -4,7 +4,9 @@ from kelloggs.main import (
     Force,
     Particle,
     Position,
-    update_repulsive_forces
+    update_repulsive_forces,
+    update_wall_forces,
+    BOX_WIDTH
 )
 
 class testUpdateRepulsiveForces(unittest.TestCase):
@@ -40,3 +42,20 @@ class testUpdateRepulsiveForces(unittest.TestCase):
         self.assertTrue(particles[0].force[0] < 0.0)
         self.assertTrue(particles[2].force[0] > 0.0)
         self.assertTrue(-particles[0].force[0] < particles[2].force[0])
+
+
+class testUpdateWallForces(unittest.TestCase):
+    def setUp(self):
+        self.particles = [
+            Particle([-1.0, 2.0], 1.0),
+            Particle([BOX_WIDTH / 2.0, 2.0], 1.0),
+            Particle([BOX_WIDTH + 1.0, 2.0], 1.0),
+            Particle([-2.0, -2.0], 1.0),
+            Particle([BOX_WIDTH / 2.0, -1.0], 1.0),
+            Particle([BOX_WIDTH + 2.0, -2.0], 1.0),
+        ]
+        update_wall_forces(self.particles)
+
+    def testForceParticle0(self):
+        self.assertTrue(self.particles[0].force[0] > 0)
+        self.assertEqual(self.particles[0].force[1], 0.0)
