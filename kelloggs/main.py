@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import random
 from math import sqrt
 from typing import TypeAlias
 
@@ -54,6 +55,10 @@ def update_wall_forces(particles: list[Particle]) -> None:
             particle.force[1] += WALL_SPRING_CONSTANT * elongation
 
 
+def setup_initial_state() -> list[Particle]:
+    return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(5, 15)) for _ in range(20)]
+
+
 def draw_box(ax: matplotlib.axes.Axes) -> None:
     ax.axline((0.0, 0.0), (0.0, 1000.0))
     ax.plot((0.0, BOX_WIDTH), (0.0, 0.0))
@@ -67,9 +72,7 @@ def main() -> None:
     fig = plt.figure()
     ax = fig.add_subplot()
     draw_box(ax)
-    particles = [
-        Particle([3.0, 3.0], 10)
-    ]
+    particles = setup_initial_state()
     update_wall_forces(particles)
     update_repulsive_forces(particles)
     for particle in particles:
