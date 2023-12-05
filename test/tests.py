@@ -46,6 +46,15 @@ class testUpdateRepulsiveForces(unittest.TestCase):
 
 class testUpdateWallForces(unittest.TestCase):
     def setUp(self):
+        """
+             |     |
+          0  |  1  |  2
+             |     |
+             |     |
+             #-----#
+
+          3     4     5
+        """
         self.particles = [
             Particle([-1.0, 2.0], 1.0),
             Particle([BOX_WIDTH / 2.0, 2.0], 1.0),
