@@ -66,5 +66,25 @@ class testUpdateWallForces(unittest.TestCase):
         update_wall_forces(self.particles)
 
     def testForceParticle0(self):
-        self.assertTrue(self.particles[0].force[0] > 0)
+        self.assertTrue(self.particles[0].force[0] > 0.0)
         self.assertEqual(self.particles[0].force[1], 0.0)
+
+    def testForceParticle1(self):
+        self.assertEqual(self.particles[1].force[0], 0.0)
+        self.assertEqual(self.particles[1].force[1], 0.0)
+
+    def testForceParticle2(self):
+        self.assertTrue(self.particles[2].force[0] < 0.0)
+        self.assertEqual(self.particles[2].force[1], 0.0)
+
+    def testForceParticle3(self):
+        self.assertTrue(self.particles[3].force[0] > 0.0)
+        self.assertTrue(self.particles[3].force[1] > 0.0)
+
+    def testForceParticle4(self):
+        self.assertEqual(self.particles[4].force[0], 0.0)
+        self.assertTrue(self.particles[4].force[1] > 0.0)
+
+    def testForceParticle5(self):
+        self.assertTrue(self.particles[5].force[0] < 0.0)
+        self.assertTrue(self.particles[5].force[1] > 0.0)
