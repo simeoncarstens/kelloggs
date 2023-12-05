@@ -42,13 +42,13 @@ def update_repulsive_forces(particles: list[Particle]) -> None:
 def update_wall_forces(particles: list[Particle]) -> None:
     for particle in particles:
         # left wall
-        if (elongation := -particle.position[0] - particle.radius) > 0:
+        if (elongation := particle.radius - particle.position[0]) > 0:
             particle.force[0] += WALL_SPRING_CONSTANT * elongation
         # right wall
         if (elongation := particle.position[0] + particle.radius - BOX_WIDTH) > 0:
             particle.force[0] -= WALL_SPRING_CONSTANT * elongation
         # bottom wall
-        if (elongation := -particle.position[1] - particle.radius) > 0:
+        if (elongation := particle.radius - particle.position[1]) > 0:
             particle.force[1] += WALL_SPRING_CONSTANT * elongation
 
 
