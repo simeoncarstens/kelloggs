@@ -71,6 +71,7 @@ def main() -> None:
         Particle([3.0, 3.0], 10)
     ]
     update_wall_forces(particles)
+    update_repulsive_forces(particles)
     for particle in particles:
         draw_particle(particle, ax)
     ax.set_aspect("equal")
