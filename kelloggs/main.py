@@ -11,6 +11,7 @@ BOX_WIDTH = 100.0
 SPRING_CONSTANT = 1.0
 WALL_SPRING_CONSTANT = 5.0
 GRAVITY_CONSTANT = 1.0
+DT = 1.0
 
 Position: TypeAlias = list[float]
 Velocity: TypeAlias = list[float]
@@ -71,6 +72,42 @@ def compute_forces(particles: list[Particle]) -> None:
     update_wall_forces(particles)
     update_repulsive_forces(particles)
     apply_gravity(particles)
+
+
+def setup_dynamics(particles: list[Particle]):
+    compute_forces(particles)
+    for particle in particles:
+        particle.velocity = [0.0, 0.0]
+    for particle in particles:
+        particle.velocity[0] += 0.5 * DT * particle.force[0] / particle.mass
+        particle.velocity[1] += 0.5 * DT * particle.force[1] / particle.mass
+
+
+def dynamic_step(particles: list[Particle]) -> None:
+    for particle in particles:
+        particle.position[0] += DT * particle.velocity[0]
+        particle.position[1] += DT * particle.velocity[1]
+    compute_forces(particles)
+    for particle in particles:
+        particle.velocity[0] += DT * particle.force[0] / particle.mass
+        particle.velocity[1] += DT * particle.force[1] / particle.mass
+
+
+def finish_dynamics(particles: list[Particle]) -> None:
+    for particle in particles:
+        particle.position[0] += DT * particle.velocity[0]
+        particle.position[1] += DT * particle.velocity[1]
+    compute_forces(particles)
+    for particle in particles:
+        particle.velocity[0] += 0.5 * DT * particle.force[0] / particle.mass
+        particle.velocity[1] += 0.5 * DT * particle.force[1] / particle.mass
+
+
+def run_dynamics(particles: list[Particle], num_steps: int) -> None:
+    setup_dynamics(particles)
+    for _ in range(1, num_steps):
+        dynamic_step(particles)
+    finish_dynamics(particles)
 
 
 def draw_box(ax: matplotlib.axes.Axes) -> None:
