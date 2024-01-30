@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import random
 from math import sqrt
+import pprint
 from typing import TypeAlias
 
 import matplotlib.axes
@@ -8,10 +9,10 @@ import matplotlib.pyplot as plt
 
 DIMENSION = 2
 BOX_WIDTH = 100.0
-SPRING_CONSTANT = 1.0
-WALL_SPRING_CONSTANT = 5.0
+SPRING_CONSTANT = 50.0
+WALL_SPRING_CONSTANT = 150.0
 GRAVITY_CONSTANT = 1.0
-DT = 1.0
+DT = 0.3
 
 Position: TypeAlias = list[float]
 Velocity: TypeAlias = list[float]
@@ -62,7 +63,7 @@ def apply_gravity(particles: list[Particle]) -> None:
 
 
 def setup_initial_state() -> list[Particle]:
-    return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(5, 15)) for _ in range(20)]
+    return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(2, 8)) for _ in range(100)]
 
 
 def compute_forces(particles: list[Particle]) -> None:
@@ -105,8 +106,24 @@ def finish_dynamics(particles: list[Particle]) -> None:
 
 def run_dynamics(particles: list[Particle], num_steps: int) -> None:
     setup_dynamics(particles)
-    for _ in range(1, num_steps):
+    for i in range(1, num_steps):
+        if i % 10 == 0:
+            print(f"Calculating step {i}")
+        # pprint.pprint(particles)
         dynamic_step(particles)
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        draw_box(ax)
+        for particle in particles:
+            draw_particle(particle, ax)
+        ax.set_aspect("equal")
+        ax.set_ylim((-10, BOX_WIDTH))
+        # write out images, look at them with, e.g.
+        # `nomacs` (`loupe`, the `eog` replacement, has an
+        # extremely annoying transition animation)
+        fig.savefig(f"/tmp/images/step{i:04}")
+        # plt.show()
+
     finish_dynamics(particles)
 
 
@@ -117,21 +134,12 @@ def draw_box(ax: matplotlib.axes.Axes) -> None:
 
 def draw_particle(particle: Particle, ax: matplotlib.axes.Axes) -> None:
     ax.add_patch(plt.Circle(particle.position, int(particle.radius), fill=False))  # type: ignore=
-    ax.arrow(*particle.position, *particle.force, width=1)
+    # ax.arrow(*particle.position, *map(lambda x: x * 0.1, particle.force), width=1)
+    # ax.arrow(*particle.position, *particle.velocity, width=1, color="red")
 
 def main() -> None:
-    fig = plt.figure()
-    ax = fig.add_subplot()
-    draw_box(ax)
     particles = setup_initial_state()
-    update_wall_forces(particles)
-    update_repulsive_forces(particles)
-    for particle in particles:
-        draw_particle(particle, ax)
-    ax.set_aspect("equal")
-    ax.set_ylim((-10, BOX_WIDTH))
-    plt.show()
-
+    run_dynamics(particles, 500)
 
 if __name__ == "__main__":
     main()
