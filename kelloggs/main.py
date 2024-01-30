@@ -64,6 +64,15 @@ def setup_initial_state() -> list[Particle]:
     return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(5, 15)) for _ in range(20)]
 
 
+def compute_forces(particles: list[Particle]) -> None:
+    for particle in particles:
+        particle.force = [0.0, 0.0]
+
+    update_wall_forces(particles)
+    update_repulsive_forces(particles)
+    apply_gravity(particles)
+
+
 def draw_box(ax: matplotlib.axes.Axes) -> None:
     ax.axline((0.0, 0.0), (0.0, 1000.0))
     ax.plot((0.0, BOX_WIDTH), (0.0, 0.0))
