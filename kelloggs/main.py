@@ -55,6 +55,11 @@ def update_wall_forces(particles: list[Particle]) -> None:
             particle.force[1] += WALL_SPRING_CONSTANT * elongation
 
 
+def apply_gravity(particles: list[Particle]) -> None:
+    for particle in particles:
+        particle.force[1] -= particle.mass * GRAVITY_CONSTANT
+
+
 def setup_initial_state() -> list[Particle]:
     return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(5, 15)) for _ in range(20)]
 
