@@ -4,9 +4,11 @@ import random
 from math import sqrt
 import pprint
 from typing import Callable, TypeAlias
+from matplotlib import animation
 
 import matplotlib.axes
 import matplotlib.pyplot as plt
+from celluloid import Camera
 
 DIMENSION = 2
 BOX_WIDTH = 100.0
@@ -136,10 +138,11 @@ def draw_particle(particle: Particle, ax: matplotlib.axes.Axes) -> None:
     # ax.arrow(*particle.position, *particle.velocity, width=1, color="red")
 
 def make_movie(particles_history: list[list[Particle]]) -> None:
+    fig = plt.figure()
+    cam = Camera(fig)
     for i, particles in enumerate(particles_history):
         if i % 10 == 0:
             print(f"Writing image {i}")
-        fig = plt.figure()
         ax = fig.add_subplot()
         draw_box(ax)
         for particle in particles:
@@ -151,8 +154,11 @@ def make_movie(particles_history: list[list[Particle]]) -> None:
         # `nomacs` (`loupe`, the `eog` replacement, has an
         # extremely annoying transition animation)
 
-        fig.savefig(f"/tmp/images/step{i:04}")
-        plt.close()
+        # fig.savefig(f"/tmp/images/step{i:04}")
+        # plt.close()
+        cam.snap()
+    animation = cam.animate()
+    animation.save("/tmp/kellogs.mp4")
 
 def main() -> None:
 
