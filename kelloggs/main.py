@@ -1,8 +1,9 @@
+from copy import deepcopy
 from dataclasses import dataclass
 import random
 from math import sqrt
 import pprint
-from typing import TypeAlias
+from typing import Callable, TypeAlias
 
 import matplotlib.axes
 import matplotlib.pyplot as plt
@@ -63,7 +64,7 @@ def apply_gravity(particles: list[Particle]) -> None:
 
 
 def setup_initial_state() -> list[Particle]:
-    return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(2, 8)) for _ in range(100)]
+    return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(2, 8)) for _ in range(20)]
 
 
 def compute_forces(particles: list[Particle]) -> None:
@@ -104,27 +105,16 @@ def finish_dynamics(particles: list[Particle]) -> None:
         particle.velocity[1] += 0.5 * DT * particle.force[1] / particle.mass
 
 
-def run_dynamics(particles: list[Particle], num_steps: int) -> None:
+def run_dynamics(particles: list[Particle], num_steps: int, callback: Callable[[list[Particle]], None]) -> None:
     setup_dynamics(particles)
     for i in range(1, num_steps):
         if i % 10 == 0:
             print(f"Calculating step {i}")
-        # pprint.pprint(particles)
         dynamic_step(particles)
-        fig = plt.figure()
-        ax = fig.add_subplot()
-        draw_box(ax)
-        for particle in particles:
-            draw_particle(particle, ax)
-        ax.set_aspect("equal")
-        ax.set_ylim((-10, BOX_WIDTH))
-        # write out images, look at them with, e.g.
-        # `nomacs` (`loupe`, the `eog` replacement, has an
-        # extremely annoying transition animation)
-        fig.savefig(f"/tmp/images/step{i:04}")
-        # plt.show()
+        callback(particles)
 
     finish_dynamics(particles)
+    callback(particles)
 
 
 def draw_box(ax: matplotlib.axes.Axes) -> None:
@@ -137,9 +127,31 @@ def draw_particle(particle: Particle, ax: matplotlib.axes.Axes) -> None:
     # ax.arrow(*particle.position, *map(lambda x: x * 0.1, particle.force), width=1)
     # ax.arrow(*particle.position, *particle.velocity, width=1, color="red")
 
+def make_movie(particles_history: list[list[Particle]]) -> None:
+    for i, particles in enumerate(particles_history):
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        draw_box(ax)
+        for particle in particles:
+            draw_particle(particle, ax)
+        ax.set_aspect("equal")
+        ax.set_ylim((-10, BOX_WIDTH))
+        # write out images, look at them with, e.g.
+        # `nomacs` (`loupe`, the `eog` replacement, has an
+        # extremely annoying transition animation)
+        fig.savefig(f"/tmp/images/step{i:04}")
+
 def main() -> None:
+
     particles = setup_initial_state()
-    run_dynamics(particles, 500)
+    particles_history: list[list[Particle]] = [deepcopy(particles)]
+
+    def callback(particles: list[Particle]) -> None:
+        particles_history.append(deepcopy(particles))
+
+    run_dynamics(particles, 500, callback)
+    assert particles_history[0][0] != particles_history[-1][0]
+    make_movie(particles_history)
 
 if __name__ == "__main__":
     main()
