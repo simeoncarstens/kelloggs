@@ -135,10 +135,12 @@ def make_movie(particles_history: list[list[Particle]]) -> None:
         for particle in particles:
             draw_particle(particle, ax)
         ax.set_aspect("equal")
-        ax.set_ylim((-10, BOX_WIDTH))
+        ax.set_xlim((-BOX_WIDTH * 0.1, BOX_WIDTH * 1.1))
+        ax.set_ylim((-BOX_WIDTH * 0.1, BOX_WIDTH * 1.1))
         # write out images, look at them with, e.g.
         # `nomacs` (`loupe`, the `eog` replacement, has an
         # extremely annoying transition animation)
+
         fig.savefig(f"/tmp/images/step{i:04}")
 
 def main() -> None:
