@@ -14,6 +14,7 @@ SPRING_CONSTANT = 50.0
 WALL_SPRING_CONSTANT = 150.0
 GRAVITY_CONSTANT = 1.0
 DT = 0.3
+FRICTION_COEFFICIENT = 0.75
 
 Position: TypeAlias = list[float]
 Velocity: TypeAlias = list[float]
@@ -58,6 +59,12 @@ def update_wall_forces(particles: list[Particle]) -> None:
             particle.force[1] += WALL_SPRING_CONSTANT * elongation
 
 
+def apply_friction(particles: list[Particle]) -> None:
+    for particle in particles:
+        particle.force[0] -= FRICTION_COEFFICIENT * particle.velocity[0]
+        particle.force[1] -= FRICTION_COEFFICIENT * particle.velocity[1]
+
+
 def apply_gravity(particles: list[Particle]) -> None:
     for particle in particles:
         particle.force[1] -= particle.mass * GRAVITY_CONSTANT
@@ -74,6 +81,7 @@ def compute_forces(particles: list[Particle]) -> None:
     update_wall_forces(particles)
     update_repulsive_forces(particles)
     apply_gravity(particles)
+    apply_friction(particles)
 
 
 def setup_dynamics(particles: list[Particle]):
