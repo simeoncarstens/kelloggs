@@ -142,6 +142,7 @@ def make_movie(particles_history: list[list[Particle]]) -> None:
         # extremely annoying transition animation)
 
         fig.savefig(f"/tmp/images/step{i:04}")
+        plt.close()
 
 def main() -> None:
 
