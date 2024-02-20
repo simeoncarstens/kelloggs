@@ -137,6 +137,8 @@ def draw_particle(particle: Particle, ax: matplotlib.axes.Axes) -> None:
 
 def make_movie(particles_history: list[list[Particle]]) -> None:
     for i, particles in enumerate(particles_history):
+        if i % 10 == 0:
+            print(f"Writing image {i}")
         fig = plt.figure()
         ax = fig.add_subplot()
         draw_box(ax)
