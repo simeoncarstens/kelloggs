@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 DIMENSION = 2
 BOX_WIDTH = 100.0
-SPRING_CONSTANT = 50.0
+SPRING_CONSTANT = 150.0
 WALL_SPRING_CONSTANT = 150.0
 GRAVITY_CONSTANT = 1.0
 DT = 0.3
@@ -71,7 +71,7 @@ def apply_gravity(particles: list[Particle]) -> None:
 
 
 def setup_initial_state() -> list[Particle]:
-    return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(2, 8)) for _ in range(20)]
+    return [Particle([random.uniform(0, BOX_WIDTH), random.uniform(0, BOX_WIDTH)], random.uniform(2, 8)) for _ in range(75)]
 
 
 def compute_forces(particles: list[Particle]) -> None:
